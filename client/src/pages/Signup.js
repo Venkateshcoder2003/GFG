@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { User, Mail, Lock, Users } from 'lucide-react';
+import { User, Mail, Lock, Users, Phone } from 'lucide-react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
@@ -10,13 +10,27 @@ const Signup = () => {
         name: '',
         email: '',
         password: '',
-        role: 'member', // Default role
+        role: 'member',
+        phone: '',
     });
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        // Chairman verification
+        if (formData.role === 'chairman') {
+            if (
+                formData.name.toLowerCase() !== 'raghavi' ||
+                formData.email.toLowerCase() !== 'raghavi@gmail.com' ||
+                formData.phone !== '7896541235'
+            ) {
+                toast.error('Invalid chairman credentials. Please contact the administrator.');
+                return;
+            }
+        }
+
         try {
-            const response = await axios.post('http://localhost:5000/api/auth/signup', formData);
+            await axios.post('http://localhost:5000/api/auth/signup', formData);
             toast.success('Signup successful! Please login.');
             navigate('/login');
         } catch (error) {
@@ -26,7 +40,7 @@ const Signup = () => {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-green-50 to-green-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-md w-full space-y-8 bg-white p-10 rounded-xl shadow-lg">
+            <div className="max-w-md w-full space-y-8 bg-white p-6 sm:p-10 rounded-xl shadow-lg">
                 <div>
                     <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
                         Join GeeksForGeeks Club
@@ -99,6 +113,28 @@ const Signup = () => {
                                     value={formData.password}
                                     onChange={(e) =>
                                         setFormData({ ...formData, password: e.target.value })
+                                    }
+                                />
+                            </div>
+                        </div>
+                        <div>
+                            <label htmlFor="phone" className="sr-only">
+                                Phone Number
+                            </label>
+                            <div className="relative">
+                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <Phone className="h-5 w-5 text-gray-400" />
+                                </div>
+                                <input
+                                    id="phone"
+                                    name="phone"
+                                    type="tel"
+                                    required
+                                    className="appearance-none rounded-lg relative block w-full px-12 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
+                                    placeholder="Phone Number"
+                                    value={formData.phone}
+                                    onChange={(e) =>
+                                        setFormData({ ...formData, phone: e.target.value })
                                     }
                                 />
                             </div>

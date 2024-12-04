@@ -1,48 +1,48 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { Toaster } from 'react-hot-toast';
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import Navbar from './components/Navbar';
-import ProtectedRoute from './components/ProtectedRoute';
 import Home from './pages/Home';
-import Login from './pages/Login';
 import Signup from './pages/Signup';
+import Login from './pages/Login';
 import Events from './pages/Events';
-import Alumni from './pages/Alumni';
-import ManageEvents from './pages/ManageEvents';
-import AdminDashboard from './pages/AdminDashboard';
+import Dashboard from './pages/Dashboard';
 
 function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userRole, setUserRole] = useState(null);
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    setIsLoggedIn(false);
+    setUserRole(null);
+  };
+
   return (
     <Router>
-      <div className="min-h-screen bg-gray-50">
-        <Navbar />
-        <Toaster position="top-right" />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/events" element={<Events />} />
-          <Route path="/alumni" element={<Alumni />} />
-          <Route
-            path="/manage-events"
-            element={
-              <ProtectedRoute allowedRoles={['coordinator', 'chairman']}>
-                <ManageEvents />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin"
-            element={
-              <ProtectedRoute allowedRoles={['chairman']}>
-                <AdminDashboard />
-              </ProtectedRoute>
-            }
-          />
-        </Routes>
+      <div className="App flex flex-col min-h-screen">
+        <Navbar isLoggedIn={isLoggedIn} userRole={userRole} logout={handleLogout} />
+        <main className="flex-grow">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route
+              path="/login"
+              element={<Login setIsLoggedIn={setIsLoggedIn} setUserRole={setUserRole} />}
+            />
+            <Route path="/events" element={<Events userRole={userRole} />} />
+            <Route
+              path="/dashboard"
+              element={isLoggedIn && userRole === 'chairman' ? <Dashboard /> : <Login setIsLoggedIn={setIsLoggedIn} setUserRole={setUserRole} />}
+            />
+          </Routes>
+        </main>
+        <ToastContainer />
       </div>
     </Router>
   );
 }
 
 export default App;
+

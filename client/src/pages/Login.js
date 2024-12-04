@@ -4,7 +4,7 @@ import { Mail, Lock } from 'lucide-react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
-const Login = () => {
+const Login = ({ setIsLoggedIn, setUserRole }) => {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
         email: '',
@@ -15,10 +15,11 @@ const Login = () => {
         e.preventDefault();
         try {
             const response = await axios.post('http://localhost:5000/api/auth/login', formData);
+            localStorage.setItem('token', response.data.token);
+            setIsLoggedIn(true);
+            setUserRole(response.data.role);
             toast.success('Login successful!');
-            // Here you might want to store the token in localStorage
-            // localStorage.setItem('token', response.data.token);
-            navigate('/dashboard');
+            navigate('/');
         } catch (error) {
             toast.error(error.response?.data?.message || 'Login failed');
         }
@@ -26,13 +27,13 @@ const Login = () => {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-green-50 to-green-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-md w-full space-y-8 bg-white p-10 rounded-xl shadow-lg">
+            <div className="max-w-md w-full space-y-8 bg-white p-6 sm:p-10 rounded-xl shadow-lg">
                 <div>
                     <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-                        Welcome Back
+                        Login to GeeksForGeeks Club
                     </h2>
                     <p className="mt-2 text-center text-sm text-gray-600">
-                        Login to your GeeksForGeeks Club account
+                        Access your account and stay connected with our community
                     </p>
                 </div>
                 <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
@@ -80,29 +81,6 @@ const Login = () => {
                                     }
                                 />
                             </div>
-                        </div>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center">
-                            <input
-                                id="remember-me"
-                                name="remember-me"
-                                type="checkbox"
-                                className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
-                            />
-                            <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
-                                Remember me
-                            </label>
-                        </div>
-
-                        <div className="text-sm">
-                            <button
-                                type="button"
-                                className="font-medium text-green-600 hover:text-green-500"
-                            >
-                                Forgot your password?
-                            </button>
                         </div>
                     </div>
 

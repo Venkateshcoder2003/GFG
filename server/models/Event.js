@@ -1,7 +1,11 @@
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 
-const eventSchema = new mongoose.Schema({
+const EventSchema = new mongoose.Schema({
     title: {
+        type: String,
+        required: true,
+    },
+    description: {
         type: String,
         required: true,
     },
@@ -17,12 +21,9 @@ const eventSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    description: {
+    image: {
         type: String,
         required: true,
-    },
-    imageUrl: {
-        type: String,
     },
     createdBy: {
         type: mongoose.Schema.Types.ObjectId,
@@ -35,4 +36,5 @@ const eventSchema = new mongoose.Schema({
     },
 });
 
-export default mongoose.model('Event', eventSchema);
+module.exports = mongoose.model('Event', EventSchema);
+
